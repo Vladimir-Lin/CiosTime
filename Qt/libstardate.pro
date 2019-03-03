@@ -1,35 +1,31 @@
 # Author : Foxman A.K.A. Vladimir Lin <lin.vladimir@gmail.com>
-# Lastest update : 2019/02/23 23:11
+# Lastest update : 2019/03/03 17:01
 
 QT          -= gui
-TARGET       = libnations
+TARGET       = libstardate
 TEMPLATE     = lib
 DEFINES     += QT_DEPRECATED_WARNINGS
-DEFINES     += EXPORT_LIBNATIONS
+DEFINES     += EXPORT_LIBSTARDATE
 
 SRCROOT      = ../
 SRCPATH      = $$SRCROOT/src
 
 INCLUDEPATH  = $$SRCROOT/include
 
-HEADERS     += $$SRCROOT/include/nations.hpp
+HEADERS     += $$SRCROOT/include/stardate.hpp
 
-SOURCES     += $$SRCPATH/nation.cpp
-SOURCES     += $$SRCPATH/region.cpp
-SOURCES     += $$SRCPATH/countries.cpp
-SOURCES     += $$SRCPATH/extended.cpp
-SOURCES     += $$SRCPATH/enumerations.cpp
+SOURCES     += $$SRCPATH/stardate.cpp
 
 OTHER_FILES += $$SRCROOT/CMakeLists.txt
-OTHER_FILES += $$SRCROOT/CiosNations.bat
+OTHER_FILES += $$SRCROOT/CiosTime.bat
 OTHER_FILES += $$SRCROOT/install.bat
-OTHER_FILES += $$SRCROOT/libnations.pc.in
+OTHER_FILES += $$SRCROOT/libstardate.pc.in
+OTHER_FILES += $$SRCROOT/VERSION.txt
 
 OTHER_FILES += $$SRCROOT/projects/*
 
 OTHER_FILES += $$SRCROOT/docs/index.html
 OTHER_FILES += $$SRCROOT/docs/*.txt
-OTHER_FILES += $$SRCROOT/docs/*.sql
 OTHER_FILES += $$SRCROOT/docs/tw/*
 OTHER_FILES += $$SRCROOT/docs/en/*
 OTHER_FILES += $$SRCROOT/docs/cn/*

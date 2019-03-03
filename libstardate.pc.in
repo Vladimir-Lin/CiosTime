@@ -1,13 +1,13 @@
-name=libnations
+name=libstardate
 libdir=$${LIBPATH}
 includedir=$${INCLUDEPATH}
 lib=${name}.lib
 file=${libdir}/${lib}
 
-Name: libnations
+Name: libstardate
 Version: 0.0.1
-Description: ISO 3166 Supports for CIOS
-URL: https://github.com/Vladimir-Lin/CiosNations
+Description: Stellar Time Supports for CIOS
+URL: https://github.com/Vladimir-Lin/CiosTime
 Libs: -L${libdir} -l${name}
 Cflags: -I${includedir}
 

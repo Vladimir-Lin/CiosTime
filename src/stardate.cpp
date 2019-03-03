@@ -1,8 +1,24 @@
-#include "nations.hpp"
+#include "stardate.hpp"
 
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
+
+#define EPOCHFILETIME ( 116444736000000000LL                     )
+#define SECSADAY      ( 86400LL                                  )
+#define GMT_HOLO      ( 16436250000000LL - 1                     )
+#define GMT_1         ( 16436250000000LL + 3652423LL             )
+#define GMT_1582      ( 16436250000000LL + 4229871LL             )
+#define GMT_START     ( 16436250000000LL + 4230148LL             )
+#define GMT_1583      ( 16436250000000LL + 4230226LL             )
+#define GMT_1900      ( 16436250000000LL + 4346008LL             )
+#define GMT_1970      ( 16436250000000LL + 4371575LL             )
+#define GMT_1601      ( 16436250000000LL + 3652423LL +  584378LL )
+#define GMT_4001      ( 16436250000000LL + 3652423LL + 1460960LL )
+#define GMT_EPOCH     ( 16436250000000LL + 4371575LL             )
+#define GMT_JULIAN    ( 1420092166837320000LL                    )
+#define STB           ( 1420092388843632000LL                    )
+#define TBASE         ( 1420092377704080000LL                    )
 
 #pragma pack(push,1)
 
@@ -10,188 +26,101 @@
 #pragma pack(pop)
 
 #ifndef DONT_USE_NAMESPACE
-namespace NATIONS_NAMESPACE {
+namespace STARDATE_NAMESPACE {
 #endif
 
-char * Clone (const char * ptr)
+StarDate:: StarDate (void)
+         : stardate (0   )
 {
-  if ( nullptr == ptr ) return nullptr ;
-  size_t t = strlen ( ptr )            ;
-  if ( t <=    0      ) return nullptr ;
-  if ( t >  1023      ) t = 1023       ;
-  char * p = new char [ t + 1 ]        ;
-  p [ t ]  = 0                         ;
-  ::memcpy ( p , ptr , t )             ;
-  return p                             ;
 }
 
-Nation:: Nation (void)
+StarDate:: StarDate (const StarDate & sd)
 {
-  this -> Id    = 0       ;
-  this -> Uuid  = 0       ;
-  this -> Type  = 0       ;
-  this -> Used  = 0       ;
-  this -> Code  = 0       ;
-  this -> Two   = nullptr ;
-  this -> Three = nullptr ;
-  this -> Four  = nullptr ;
-  this -> Name  = nullptr ;
+  this -> stardate = sd.stardate ;
 }
 
-Nation:: Nation (const Nation & nation)
+StarDate:: StarDate (int64_t sd)
 {
-  this -> assign ( nation ) ;
+  this -> stardate = sd ;
 }
 
-Nation:: Nation (const NationItem & nation)
+StarDate::~StarDate (void)
 {
-  this -> assign ( nation ) ;
 }
 
-Nation::~Nation (void)
+bool StarDate::isValid(void) const
 {
-  if ( nullptr != this -> Two   ) delete [ ] this -> Two   ;
-  if ( nullptr != this -> Three ) delete [ ] this -> Three ;
-  if ( nullptr != this -> Four  ) delete [ ] this -> Four  ;
-  if ( nullptr != this -> Name  ) delete [ ] this -> Name  ;
-  this -> Two   = nullptr                                  ;
-  this -> Three = nullptr                                  ;
-  this -> Four  = nullptr                                  ;
-  this -> Name  = nullptr                                  ;
+  return ( this -> stardate > 0 ) ;
 }
 
-bool Nation::operator == (const Nation & nation) const
+StarDate & StarDate::operator = (const StarDate & sd)
 {
-  if ( this -> Uuid != nation . Uuid ) return false ;
-  if ( this -> Code != nation . Code ) return false ;
-  if ( this -> Type != nation . Type ) return false ;
-  return true                                       ;
+  this -> stardate = sd . stardate ;
+  return (*this)                   ;
 }
 
-Nation & Nation::operator = (const Nation & nation)
+StarDate & StarDate::operator = (int64_t sd)
 {
-  return this -> assign ( nation ) ;
+  this -> stardate = sd ;
+  return (*this)        ;
 }
 
-Nation & Nation::operator = (const NationItem & nation)
+StarDate & StarDate::operator += (int64_t seconds)
 {
-  return this -> assign ( nation ) ;
+  this -> stardate += seconds ;
+  return (*this)              ;
 }
 
-Nation & Nation::assign(const Nation & nation)
+StarDate & StarDate::operator -= (int64_t seconds)
 {
-  this -> Id    =         nation . Id      ;
-  this -> Uuid  =         nation . Uuid    ;
-  this -> Type  =         nation . Type    ;
-  this -> Used  =         nation . Used    ;
-  this -> Code  =         nation . Code    ;
-  this -> Two   = Clone ( nation . Two   ) ;
-  this -> Three = Clone ( nation . Three ) ;
-  this -> Four  = Clone ( nation . Four  ) ;
-  this -> Name  = Clone ( nation . Name  ) ;
-  return (*this)                           ;
+  this -> stardate -= seconds ;
+  return (*this)              ;
 }
 
-Nation & Nation::assign(const NationItem & nation)
+StarDate & StarDate::Now(void)
 {
-  this -> Id    =         nation . Id      ;
-  this -> Uuid  =         nation . Uuid    ;
-  this -> Type  =         nation . Type    ;
-  this -> Used  =         nation . Used    ;
-  this -> Code  =         nation . Code    ;
-  this -> Two   = Clone ( nation . Two   ) ;
-  this -> Three = Clone ( nation . Three ) ;
-  this -> Four  = Clone ( nation . Four  ) ;
-  this -> Name  = Clone ( nation . Name  ) ;
-  return (*this)                           ;
+  this -> setTime ( time (NULL) ) ;
+  return (*this)                  ;
 }
 
-bool Nation::isType(int8_t type) const
+StarDate & StarDate::assign(const StarDate & sd)
 {
-  return ( Type == type ) ;
+  this -> stardate = sd . stardate ;
+  return (*this)                   ;
 }
 
-bool Nation::isCountry(void) const
+StarDate & StarDate::setTime(time_t current)
 {
-  return ( Country == Type ) ;
+  this -> stardate  = current ;
+  this -> stardate += TBASE   ;
+  return (*this)              ;
 }
 
-bool Nation::isRegion(void) const
+time_t StarDate::toTimestamp (void) const
 {
-  return ( Region == Type ) ;
+  return time_t ( this -> stardate - TBASE ) ;
 }
 
-bool Nation::isNormal(void) const
+StarDate & StarDate::Add(int64_t seconds)
 {
-  if ( isCountry ( ) ) return true ;
-  if ( isRegion  ( ) ) return true ;
-  return false                     ;
+  this -> stardate += seconds ;
+  return (*this)              ;
 }
 
-bool Nation::isActivated (void) const
+StarDate & StarDate::Subtract(int64_t seconds)
 {
-  return ( Using == this -> Used ) ;
+  this -> stardate -= seconds ;
+  return (*this)              ;
 }
 
-bool Nation::isValid(uint64_t uuid) const
+int64_t StarDate::secondsTo(const StarDate & sd) const
 {
-  if ( uuid < 7400000000000000001ULL ) return false ;
-  if ( uuid > 7400000000001000000ULL ) return false ;
-  return true                                       ;
+  return int64_t ( sd . stardate - this -> stardate ) ;
 }
 
-bool Nation::isUuid(uint64_t uuid) const
+int64_t StarDate::secondsTo(int64_t sd) const
 {
-  return ( Uuid == uuid ) ;
-}
-
-bool Nation::isEqual(int16_t code) const
-{
-  return ( Code == code ) ;
-}
-
-bool Nation::isEqual(const char * alpha) const
-{
-  if ( nullptr == alpha ) return false ;
-  size_t len = strlen ( alpha )        ;
-  if ( len > 4 ) return false          ;
-  if ( len < 2 ) return false          ;
-  //////////////////////////////////////
-  const char * p = nullptr             ;
-  switch ( len )                       {
-    case 2: p = Two   ; break          ;
-    case 3: p = Three ; break          ;
-    case 4: p = Four  ; break          ;
-  }                                    ;
-  if ( nullptr == p ) return false     ;
-  //////////////////////////////////////
-  for (size_t i = 0 ; i < len ; i++ )  {
-    int c = p     [ i ]                ;
-    int z = alpha [ i ]                ;
-    c = tolower ( c )                  ;
-    z = tolower ( z )                  ;
-    if ( c != z ) return false         ;
-  }                                    ;
-  //////////////////////////////////////
-  return true                          ;
-}
-
-std::string Nation::toStdString(int length)
-{
-  std::string key                                       ;
-  switch ( length )                                     {
-    case 2: if ( nullptr != Two   ) key = Two   ; break ;
-    case 3: if ( nullptr != Three ) key = Three ; break ;
-    case 4: if ( nullptr != Four  ) key = Four  ; break ;
-  }                                                     ;
-  return key                                            ;
-}
-
-int Nation::NationItemCount(NationItem items [ ])
-{
-  int count = 0                              ;
-  while ( items [ count ] . Id > 0 ) count++ ;
-  return count                               ;
+  return int64_t ( sd - this -> stardate ) ;
 }
 
 #ifndef DONT_USE_NAMESPACE

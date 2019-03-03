@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.0)
-project(libnations)
+project(libstardate)
 include(CheckIncludeFile)
 
 option(NONAMESPACE "Don't use namespace in the header" off)
@@ -46,34 +46,29 @@ endif(MSVC)
 include_directories(include)
 
 # Header
-set(HEADERS include/nations.hpp)
+set(HEADERS include/stardate.hpp)
 
 # Source codes
-set(CORES
-  src/nation.cpp
-  src/region.cpp
-  src/countries.cpp
-  src/extended.cpp
-  src/enumerations.cpp)
+set(CORES src/stardate.cpp)
 
 # Handling pkg-config file
-configure_file(libnations.pc.in libnations.pc @ONLY)
+configure_file(libstardate.pc.in libstardate.pc @ONLY)
 
 if(BUILD_SHARED_LIBS)
-  add_library(libnations SHARED ${CORES} ${HEADERS})
-#  target_link_libraries(libnations m)
+  add_library(libstardate SHARED ${CORES} ${HEADERS})
+#  target_link_libraries(libstardate m)
   add_definitions("-DBUILD_SHARED_LIBS=1")
-  add_definitions("-DEXPORT_LIBNATIONS=1")
-  install(TARGETS libnations
+  add_definitions("-DEXPORT_LIBSTARDATE=1")
+  install(TARGETS libstardate
     RUNTIME DESTINATION bin
     LIBRARY DESTINATION lib
     ARCHIVE DESTINATION lib)
-  install(FILES include/nations.hpp DESTINATION include)
-  install(FILES ${CMAKE_BINARY_DIR}/libnations.pc DESTINATION lib/packages)
+  install(FILES include/stardate.hpp DESTINATION include)
+  install(FILES ${CMAKE_BINARY_DIR}/libstardate.pc DESTINATION lib/packages)
 else(BUILD_SHARED_LIBS)
-  add_library(libnations STATIC ${CORES} ${HEADERS})
+  add_library(libstardate STATIC ${CORES} ${HEADERS})
 #  target_link_libraries(libnations m)
-  install(TARGETS libnations DESTINATION lib)
-  install(FILES include/nations.hpp DESTINATION include)
-  install(FILES ${CMAKE_BINARY_DIR}/libnations.pc DESTINATION lib/packages)
+  install(TARGETS libstardate DESTINATION lib)
+  install(FILES include/stardate.hpp DESTINATION include)
+  install(FILES ${CMAKE_BINARY_DIR}/libstardate.pc DESTINATION lib/packages)
 endif(BUILD_SHARED_LIBS)
