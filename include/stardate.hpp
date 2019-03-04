@@ -39,46 +39,97 @@
 namespace STARDATE_NAMESPACE {
 #endif
 
-#pragma pack(push,1)
-
-#pragma pack(pop)
-
 class LIBSTARDATE_EXPORT StarDate
 {
   public:
 
     int64_t stardate ;
 
-    explicit       StarDate    (void) ;
-                   StarDate    (const StarDate & sd) ;
-                   StarDate    (int64_t sd) ;
-    virtual       ~StarDate    (void) ;
+    explicit        StarDate     (void) ;
+                    StarDate     (const StarDate & sd) ;
+                    StarDate     (int64_t sd) ;
+    virtual        ~StarDate     (void) ;
 
-    operator       int64_t     ( ) const { return stardate ; }
-    bool           isValid     (void) const ;
+    operator        int64_t      ( ) const { return stardate ; }
+    virtual int     type         (void) const ;
 
-    StarDate &     operator  = (const StarDate & sd) ;
-    StarDate &     operator  = (int64_t sd) ;
+    bool            isValid      (void) const ;
 
-    StarDate &     operator += (int64_t seconds) ;
-    StarDate &     operator -= (int64_t seconds) ;
+    virtual int64_t Standard     (void) const ;
+    virtual int64_t TimeShift    (void) const ;
 
-    StarDate &     Now         (void) ;
-    StarDate &     assign      (const StarDate & sd) ;
-    StarDate &     setTime     (time_t current) ;
-    time_t         toTimestamp (void) const ;
+    virtual void    adjustments  (void) ;
 
-    StarDate &     Add         (int64_t seconds) ;
-    StarDate &     Subtract    (int64_t seconds) ;
+    StarDate &      operator   = (const StarDate & sd) ;
+    StarDate &      operator   = (int64_t sd) ;
 
-    int64_t        secondsTo   (const StarDate & sd) const ;
-    int64_t        secondsTo   (int64_t sd) const ;
+    StarDate &      operator  += (int64_t seconds) ;
+    StarDate &      operator  -= (int64_t seconds) ;
 
-    static void    sleep       (int64_t seconds) ;
-    static void    msleep      (int64_t mseconds) ;
-    static void    usleep      (int64_t useconds) ;
+    bool            isEqual      (const StarDate & sd) const ;
+    bool            isEqual      (int64_t sd) const ;
 
-    static int64_t useconds    (void) ;
+    bool            isGreater    (const StarDate & sd) const ;
+    bool            isGreater    (int64_t sd) const ;
+
+    bool            isLess       (const StarDate & sd) const ;
+    bool            isLess       (int64_t sd) const ;
+
+    bool            operator  == (const StarDate & sd) const ;
+    bool            operator  == (int64_t sd) const ;
+
+    bool            operator   > (const StarDate & sd) const ;
+    bool            operator   > (int64_t sd) const ;
+    bool            operator   < (const StarDate & sd) const ;
+    bool            operator   < (int64_t sd) const ;
+
+    StarDate        operator   + (int64_t seconds) ;
+    StarDate        operator   - (int64_t seconds) ;
+
+    StarDate &      Now          (void) ;
+    StarDate &      assign       (const StarDate & sd) ;
+    StarDate &      setTime      (time_t current) ;
+    StarDate &      fromUStamp   (int64_t uts) ;
+    time_t          toTimestamp  (void) const ;
+
+    // StarDate Version of Day and Time
+    int64_t         toDay        (void) const ;
+    int64_t         toTime       (void) const ;
+
+    // Lilian Seconds ... Seconds version of Lilian Date
+    int64_t         LilianNumber (void) const ;
+    StarDate &      setLilian    (int64_t lilian) ;
+
+    // Millions Years Ago
+    long double     toMya        (void) const ;
+    long double     setMya       (long double mya) ;
+
+    // Julian Calendar
+    StarDate &      setJulianDay (long double JD) ;
+    long double     JulianDay    (void) const ;
+
+    long double     RataDie      (void) const ;
+    long double     MJD          (void) const ;
+
+    StarDate &      Add         (int64_t seconds) ;
+    StarDate &      Subtract    (int64_t seconds) ;
+
+    int64_t         toNow       (void) const ;
+
+    int64_t         secondsTo   (const StarDate & sd) const ;
+    int64_t         secondsTo   (int64_t sd) const ;
+
+    int64_t         daysTo      (const StarDate & sd) const ;
+    int64_t         daysTo      (int64_t sd) const ;
+
+    static void     sleep       (int64_t seconds) ;
+    static void     msleep      (int64_t mseconds) ;
+    static void     usleep      (int64_t useconds) ;
+
+    static int64_t  current     (void) ;
+    static int64_t  useconds    (void) ;
+    static int64_t  ustamp      (void) ;
+    static int64_t  tzOffset    (void) ;
 
   protected:
 

@@ -4,6 +4,7 @@
 
 #define EPOCHFILETIME ( 116444736000000000LL                     )
 #define SECSADAY      ( 86400LL                                  )
+#define HALFDAY       ( 43200LL                                  )
 #define GMT_HOLO      ( 16436250000000LL - 1                     )
 #define GMT_1         ( 16436250000000LL + 3652423LL             )
 #define GMT_1582      ( 16436250000000LL + 4229871LL             )
@@ -17,6 +18,20 @@
 #define GMT_JULIAN    ( 1420092166837320000LL                    )
 #define STB           ( 1420092388843632000LL                    )
 #define TBASE         ( 1420092377704080000LL                    )
+
+// Julian Day 0 = ( ( ( GMT_HOLO + 1930988LL ) * SECSADAY) + (12 * 3600) )
+//              = 1420092166837276800 + 43200 = 1420092166837320000
+
+// year % 8000 == 4000 -> not leap year
+// year % 400  == 0    -> leap year
+// year % 100  == 0    -> not leap year
+// year % 4    == 0    -> leap year
+//
+// 8000 years = 2921939 days
+// 4000 years = 1460969 days
+//  400 years =  146097 days
+//  100 years =   36524 days
+//    4 years =    1461 days
 
 #pragma pack(push,1)
 
@@ -44,7 +59,7 @@ StarDate:: StarDate (void)
 
 StarDate:: StarDate (const StarDate & sd)
 {
-  this -> stardate = sd.stardate ;
+  this -> stardate = sd . stardate ;
 }
 
 StarDate:: StarDate (int64_t sd)
@@ -56,69 +71,268 @@ StarDate::~StarDate (void)
 {
 }
 
+int StarDate::type(void) const
+{
+  return 0 ;
+}
+
+void StarDate::adjustments(void)
+{
+}
+
 bool StarDate::isValid(void) const
 {
   return ( this -> stardate > 0 ) ;
 }
 
+int64_t StarDate::Standard(void) const
+{
+  return ( this -> stardate ) ;
+}
+
+int64_t StarDate::TimeShift(void) const
+{
+  return 0 ;
+}
+
 StarDate & StarDate::operator = (const StarDate & sd)
 {
   this -> stardate = sd . stardate ;
+  adjustments ( )                  ;
   return (*this)                   ;
 }
 
 StarDate & StarDate::operator = (int64_t sd)
 {
   this -> stardate = sd ;
+  adjustments ( )       ;
   return (*this)        ;
 }
 
 StarDate & StarDate::operator += (int64_t seconds)
 {
   this -> stardate += seconds ;
+  adjustments ( )             ;
   return (*this)              ;
 }
 
 StarDate & StarDate::operator -= (int64_t seconds)
 {
   this -> stardate -= seconds ;
+  adjustments ( )             ;
   return (*this)              ;
+}
+
+bool StarDate::isEqual(const StarDate & sd) const
+{
+  return ( sd . stardate == this -> stardate ) ;
+}
+
+bool StarDate::isEqual(int64_t sd) const
+{
+  return ( sd == this -> stardate ) ;
+}
+
+bool StarDate::isGreater(const StarDate & sd) const
+{
+  return ( this -> stardate > sd . stardate ) ;
+}
+
+bool StarDate::isGreater(int64_t sd) const
+{
+  return ( this -> stardate > sd ) ;
+}
+
+bool StarDate::isLess(const StarDate & sd) const
+{
+  return ( this -> stardate < sd . stardate ) ;
+}
+
+bool StarDate::isLess(int64_t sd) const
+{
+  return ( this -> stardate < sd ) ;
+}
+
+bool StarDate::operator == (const StarDate & sd) const
+{
+  return ( sd . stardate == this -> stardate ) ;
+}
+
+bool StarDate::operator == (int64_t sd) const
+{
+  return ( sd == this -> stardate ) ;
+}
+
+bool StarDate::operator > (const StarDate & sd) const
+{
+  return ( this -> stardate > sd . stardate ) ;
+}
+
+bool StarDate::operator > (int64_t sd) const
+{
+  return ( this -> stardate > sd ) ;
+}
+
+bool StarDate::operator < (const StarDate & sd) const
+{
+  return ( this -> stardate < sd . stardate ) ;
+}
+
+bool StarDate::operator < (int64_t sd) const
+{
+  return ( this -> stardate < sd ) ;
+}
+
+StarDate StarDate::operator + (int64_t seconds)
+{
+  StarDate sd                       ;
+  sd . stardate  = this -> stardate ;
+  sd . stardate += seconds          ;
+  sd . adjustments ( )              ;
+  return sd                         ;
+}
+
+StarDate StarDate::operator - (int64_t seconds)
+{
+  StarDate sd                       ;
+  sd . stardate  = this -> stardate ;
+  sd . stardate -= seconds          ;
+  sd . adjustments ( )              ;
+  return sd                         ;
 }
 
 StarDate & StarDate::Now(void)
 {
-  this -> setTime ( time (NULL) ) ;
-  return (*this)                  ;
+  this -> setTime ( time ( nullptr ) ) ;
+  return (*this)                       ;
 }
 
 StarDate & StarDate::assign(const StarDate & sd)
 {
   this -> stardate = sd . stardate ;
+  adjustments ( )                  ;
   return (*this)                   ;
 }
 
-StarDate & StarDate::setTime(time_t current)
+StarDate & StarDate::setTime(time_t now)
 {
-  this -> stardate  = current ;
-  this -> stardate += TBASE   ;
-  return (*this)              ;
+  this -> stardate  = now   ;
+  this -> stardate += TBASE ;
+  adjustments ( )           ;
+  return (*this)            ;
 }
 
-time_t StarDate::toTimestamp (void) const
+StarDate & StarDate::fromUStamp(int64_t uts)
+{
+  return this -> setTime ( uts / 1000000LL ) ;
+}
+
+time_t StarDate::toTimestamp(void) const
 {
   return time_t ( this -> stardate - TBASE ) ;
+}
+
+int64_t StarDate::toDay(void) const
+{
+  return int64_t ( this -> stardate / SECSADAY ) ;
+}
+
+int64_t StarDate::toTime(void) const
+{
+  return int64_t ( this -> stardate % SECSADAY ) ;
+}
+
+int64_t StarDate::LilianNumber(void) const
+{
+  return ( this -> stardate - ( ( GMT_START + 1 ) * SECSADAY ) ) ;
+}
+
+StarDate & StarDate::setLilian(int64_t lilian)
+{
+  this -> stardate  = lilian                           ;
+  this -> stardate += ( ( GMT_START + 1 ) * SECSADAY ) ;
+  adjustments ( )                                      ;
+  return (*this)                                       ;
+}
+
+long double StarDate::toMya(void) const
+{
+  int64_t     ds                       ;
+  long double ma                       ;
+  ds  = current ( ) - this -> stardate ;
+  ma  = (long double) ds               ;
+  ma /= SECSADAY                       ;
+  ma /= 1461                           ;
+  ma *= 4                              ;
+  ma /= (long double) 1000000          ;
+  return ma                            ;
+}
+
+long double StarDate::setMya(long double mya)
+{
+  /////////////////////////////////////////////
+  int64_t     sd  = StarDate::current ( )     ;
+  int64_t     nt  = int64_t ( sd % SECSADAY ) ;
+  int64_t     day = int64_t ( sd / SECSADAY ) ;
+  long double ma = mya                        ;
+  /////////////////////////////////////////////
+  ma *= (long double) 1000000                 ;
+  ma *= 1461                                  ;
+  ma /= 4                                     ;
+  /////////////////////////////////////////////
+  this -> stardate  = day                     ;
+  this -> stardate -= int64_t ( ma )          ;
+  this -> stardate *= SECSADAY                ;
+  this -> stardate += nt                      ;
+  /////////////////////////////////////////////
+  adjustments ( )                             ;
+  /////////////////////////////////////////////
+  return mya                                  ;
+}
+
+StarDate & StarDate::setJulianDay(long double JD)
+{
+  int64_t ts = int64_t ( JD * SECSADAY ) ;
+  this -> stardate  = GMT_JULIAN         ;
+  this -> stardate += ts                 ;
+  return (*this)                         ;
+}
+
+long double StarDate::JulianDay(void) const
+{
+  return (long double)( ((long double)(this -> stardate - GMT_JULIAN)) / SECSADAY ) ;
+}
+
+long double StarDate::RataDie(void) const
+{
+  return (long double) ( this -> JulianDay ( ) - ( (long double) 1721425 ) ) ;
+}
+
+long double StarDate::MJD(void) const
+{
+  return (long double) ( this -> JulianDay ( ) - ( (long double) 2400000.5 ) ) ;
 }
 
 StarDate & StarDate::Add(int64_t seconds)
 {
   this -> stardate += seconds ;
+  adjustments ( )             ;
   return (*this)              ;
 }
 
 StarDate & StarDate::Subtract(int64_t seconds)
 {
   this -> stardate -= seconds ;
+  adjustments ( )             ;
   return (*this)              ;
+}
+
+int64_t StarDate::toNow(void) const
+{
+  int64_t now = time ( nullptr ) ;
+  now += TBASE                   ;
+  now -= this -> stardate        ;
+  return now                     ;
 }
 
 int64_t StarDate::secondsTo(const StarDate & sd) const
@@ -129,6 +343,18 @@ int64_t StarDate::secondsTo(const StarDate & sd) const
 int64_t StarDate::secondsTo(int64_t sd) const
 {
   return int64_t ( sd - this -> stardate ) ;
+}
+
+int64_t StarDate::daysTo(const StarDate & sd) const
+{
+  int64_t ds = this -> secondsTo ( sd ) ;
+  return ( ds / SECSADAY )              ;
+}
+
+int64_t StarDate::daysTo(int64_t sd) const
+{
+  int64_t ds = this -> secondsTo ( sd ) ;
+  return ( ds / SECSADAY )              ;
 }
 
 void StarDate::sleep(int64_t seconds)
@@ -153,6 +379,11 @@ void StarDate::usleep(int64_t us)
   /////////////////////////////////////////
 }
 
+int64_t StarDate::current(void)
+{
+  return int64_t ( int64_t ( time ( nullptr ) ) + TBASE ) ;
+}
+
 int64_t StarDate::useconds(void)
 {
   struct timeval tv              ;
@@ -161,6 +392,31 @@ int64_t StarDate::useconds(void)
   tt = int64_t (  tv . tv_usec ) ;
   tt = tt % 1000000LL            ;
   return tt                      ;
+}
+
+int64_t StarDate::ustamp(void)
+{
+  struct timeval tv               ;
+  int64_t        tt               ;
+  int64_t        ts               ;
+  tt = time     ( nullptr       ) ;
+  gettimeofday  ( &tv , nullptr ) ;
+  ts  = int64_t (  tv . tv_usec ) ;
+  ts  = ts % 1000000LL            ;
+  tt  = tt * 1000000LL            ;
+  tt += ts                        ;
+  return tt                       ;
+}
+
+int64_t StarDate::tzOffset(void)
+{
+  struct timeval  tv                    ;
+  struct timezone tz                    ;
+  int64_t         tt                    ;
+  gettimeofday ( &tv , &tz            ) ;
+  tt = int64_t (  tz . tz_minuteswest ) ;
+  tt = tt * 60LL                        ;
+  return tt                             ;
 }
 
 #ifndef DONT_USE_NAMESPACE
