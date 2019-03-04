@@ -26,6 +26,10 @@
 #include <stdio.h>
 #include <time.h>
 
+#include <string>
+#include <list>
+#include <utility>
+
 #if !defined(STARDATE_NAMESPACE)
 #define STARDATE_NAMESPACE CIOS
 #endif
@@ -42,6 +46,7 @@ namespace STARDATE_NAMESPACE {
 class LIBSTARDATE_EXPORT StarDate  ;
 class LIBSTARDATE_EXPORT StarTime  ;
 class LIBSTARDATE_EXPORT Frequency ;
+class LIBSTARDATE_EXPORT Estimator ;
 
 class LIBSTARDATE_EXPORT StarDate
 {
@@ -237,6 +242,54 @@ class LIBSTARDATE_EXPORT Frequency
   protected:
 
   private:
+
+} ;
+
+/*****************************************************************************
+ *                                                                           *
+ *                                Data Estimator                             *
+ *                                                                           *
+ * Normally, this is used for a download or complete percentage rate         *
+ *                                                                           *
+ *****************************************************************************/
+
+class LIBSTARDATE_EXPORT Estimator
+{
+  public:
+
+    long double                                   GlobalRate ;
+    long double                                   RecentRate ;
+    long double                                   Completed  ;
+    //////////////////////////////////////////////////////////
+    int64_t                                       Duration   ;
+    int64_t                                       Arrival    ;
+    int64_t                                       Recent     ;
+    int64_t                                       Goal       ;
+    //////////////////////////////////////////////////////////
+    size_t                                        MaxSizes   ;
+    //////////////////////////////////////////////////////////
+    StarTime                                      StartTime  ;
+    StarTime                                      FinishTime ;
+    StarTime                                      Estimated  ;
+    StarTime                                      Tick       ;
+    //////////////////////////////////////////////////////////
+    Frequency                                     Counter    ;
+    Frequency                                     Update     ;
+    //////////////////////////////////////////////////////////
+    std::list < std::pair < int64_t , int64_t > > Sizes      ;
+
+    explicit                           Estimator   (void) ;
+    virtual                           ~Estimator   (void) ;
+
+    void                               setGoal     (int64_t goal) ;
+    void                               setRecent   (int64_t seconds) ;
+
+    virtual void                       operator += (int64_t size) ;
+    virtual std::pair<int64_t,int64_t> append      (int64_t size) ;
+    virtual std::pair<int64_t,int64_t> add         (int64_t size) ;
+    virtual void                       start       (void) ;
+    virtual void                       update      (void) ;
+    virtual void                       update      (int64_t T) ;
 
 } ;
 

@@ -17,6 +17,7 @@ HEADERS     += $$SRCROOT/include/stardate.hpp
 SOURCES     += $$SRCPATH/stardate.cpp
 SOURCES     += $$SRCPATH/startime.cpp
 SOURCES     += $$SRCPATH/frequency.cpp
+SOURCES     += $$SRCPATH/estimator.cpp
 SOURCES     += $$SRCPATH/usleep.cpp
 SOURCES     += $$SRCPATH/hardware.cpp
 

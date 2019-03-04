@@ -53,7 +53,7 @@ extern int64_t HardwareFrequency (void) ;
 #define strcasecmp strcasecmp_local
 
 Frequency:: Frequency (void)
-          : factor    (1.0f)
+          : factor    (static_cast<long double>(1.0))
           , frequency (0   )
           , events    (0   )
           , duration  (0   )
@@ -71,7 +71,7 @@ Frequency::~Frequency(void)
 
 Frequency::operator long double ( ) const
 {
-  return frequency * factor ;
+  return static_cast<long double> ( frequency * factor ) ;
 }
 
 Frequency & Frequency::assign(const Frequency & freq)
@@ -103,19 +103,19 @@ Frequency & Frequency::operator += (int64_t count)
 // frequency = events / duration
 long double Frequency::evaluate(void)
 {
-  if ( 0 == this -> duration )                        {
-    this -> frequency = 0                             ;
-    return 0                                          ;
-  }                                                   ;
-  /////////////////////////////////////////////////////
-  if ( 0 == this -> events   )                        {
-    this -> frequency = 0                             ;
-    return 0                                          ;
-  }                                                   ;
-  /////////////////////////////////////////////////////
-  this -> frequency  = (long double) this -> events   ;
-  this -> frequency /= this -> duration               ;
-  return this -> frequency                            ;
+  if ( 0 == this -> duration )                                    {
+    this -> frequency = 0                                         ;
+    return 0                                                      ;
+  }                                                               ;
+  /////////////////////////////////////////////////////////////////
+  if ( 0 == this -> events   )                                    {
+    this -> frequency = 0                                         ;
+    return 0                                                      ;
+  }                                                               ;
+  /////////////////////////////////////////////////////////////////
+  this -> frequency  = static_cast<long double>( this -> events ) ;
+  this -> frequency /= this -> duration                           ;
+  return this -> frequency                                        ;
 }
 
 // events = frequency * duration (double)
@@ -130,10 +130,10 @@ long double Frequency::velocity(void)
 // duration = events / frequency
 long double Frequency::length(void)
 {
-  long double d = (long double) this -> events ;
-  d            /= this -> frequency            ;
-  duration      = int64_t ( d )                ;
-  return d                                     ;
+  long double d = static_cast<long double> ( this -> events ) ;
+  d            /= this -> frequency                           ;
+  duration      = int64_t ( d )                               ;
+  return d                                                    ;
 }
 
 // events = frequency * duration
@@ -148,18 +148,18 @@ int64_t Frequency::total(void)
 // duration = events / frequency
 int64_t Frequency::lambda(void)
 {
-  long double d = (long double) this -> events ;
-  d            /= this -> frequency            ;
-  duration      = int64_t ( d )                ;
-  return duration                              ;
+  long double d = static_cast<long double> ( this -> events ) ;
+  d            /= this -> frequency                           ;
+  duration      = int64_t ( d )                               ;
+  return duration                                             ;
 }
 
 long double Frequency::operator = (const StarTime & T)
 {
-  int64_t d = T . Leaps ( )               ;
-  this -> duration = ( d >= 0 ) ? d : -d  ;
-  this -> evaluate ( )                    ;
-  return this -> frequency * 1000000000.0 ;
+  int64_t d = T . Leaps ( )                                         ;
+  this -> duration = ( d >= 0 ) ? d : -d                            ;
+  this -> evaluate ( )                                              ;
+  return this -> frequency * static_cast<long double>(1000000000.0) ;
 }
 
 #ifndef DONT_USE_NAMESPACE
