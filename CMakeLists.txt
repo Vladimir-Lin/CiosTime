@@ -38,8 +38,10 @@ if(MSVC)
   add_definitions("/nologo")
   if("${CMAKE_SIZEOF_VOID_P}" STREQUAL "8")
     set(TARGET_ARCH x64)
+    add_definitions("-DCIOS_X64=1")
   elseif("${CMAKE_SIZEOF_VOID_P}" STREQUAL "4")
     set(TARGET_ARCH x86)
+    add_definitions("-DCIOS_X86=1")
   endif()
 endif(MSVC)
 
@@ -51,7 +53,8 @@ set(HEADERS include/stardate.hpp)
 # Source codes
 set(CORES
   src/stardate.cpp
-  src/usleep.cpp)
+  src/usleep.cpp
+  src/hardware.cpp)
 
 # Handling pkg-config file
 configure_file(libstardate.pc.in libstardate.pc @ONLY)

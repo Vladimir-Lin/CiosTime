@@ -46,9 +46,12 @@ struct timezone       {
 namespace STARDATE_NAMESPACE {
 #endif
 
-extern void uSleep           (int64_t usec) ;
-extern int  gettimeofday     (struct timeval * tv, struct timezone * tz) ;
-extern int  strcasecmp_local (const char *s1,const char *s2) ;
+extern void    uSleep            (int64_t usec) ;
+extern int     gettimeofday      (struct timeval * tv, struct timezone * tz) ;
+extern int     strcasecmp_local  (const char *s1,const char *s2) ;
+extern int64_t getRDTSC          (void) ;
+extern int64_t HardwareClock     (void) ;
+extern int64_t HardwareFrequency (void) ;
 
 #define strcasecmp strcasecmp_local
 
@@ -357,6 +360,42 @@ int64_t StarDate::daysTo(int64_t sd) const
   return ( ds / SECSADAY )              ;
 }
 
+StarDate StarDate::ETA(int64_t index,int64_t total)
+{
+  StarDate SD                                         ;
+  SD . stardate  = this -> stardate                   ;
+  SD . stardate += this -> Estimate ( index , total ) ;
+  SD . adjustments ( )                                ;
+  return SD                                           ;
+}
+
+StarDate StarDate::ETA(int64_t index,int64_t minv,int64_t maxv)
+{
+  return this -> ETA ( index - minv , maxv - minv + 1 ) ;
+}
+
+int64_t StarDate::Estimate(int64_t index,int64_t total)
+{
+  if ( index <= 0     ) return 0                             ;
+  if ( total <= 0     ) return 0                             ;
+  if ( index >= total ) return 0                             ;
+  ////////////////////////////////////////////////////////////
+  int64_t tn = this -> toNow ( )                             ;
+  if ( tn    <  0     ) return 0                             ;
+  ////////////////////////////////////////////////////////////
+  tn *= total                                                ;
+  tn /= index                                                ;
+  ////////////////////////////////////////////////////////////
+  return tn                                                  ;
+}
+
+int64_t StarDate::Estimate(int64_t index,int64_t minv,int64_t maxv)
+{
+  if ( minv  >= maxv ) return 0                              ;
+  if ( index <  minv ) return 0                              ;
+  return this -> Estimate ( index - minv , maxv - minv + 1 ) ;
+}
+
 void StarDate::sleep(int64_t seconds)
 {
   ::Sleep( DWORD ( seconds * 1000 ) ) ;
@@ -417,6 +456,21 @@ int64_t StarDate::tzOffset(void)
   tt = int64_t (  tz . tz_minuteswest ) ;
   tt = tt * 60LL                        ;
   return tt                             ;
+}
+
+int64_t StarDate::RDTSC(void)
+{
+  return getRDTSC ( ) ;
+}
+
+int64_t StarDate::Clock(void)
+{
+  return HardwareClock ( ) ;
+}
+
+int64_t StarDate::Frequency(void)
+{
+  return HardwareFrequency ( ) ;
 }
 
 #ifndef DONT_USE_NAMESPACE

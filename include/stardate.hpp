@@ -111,25 +111,36 @@ class LIBSTARDATE_EXPORT StarDate
     long double     RataDie      (void) const ;
     long double     MJD          (void) const ;
 
-    StarDate &      Add         (int64_t seconds) ;
-    StarDate &      Subtract    (int64_t seconds) ;
+    StarDate &      Add          (int64_t seconds) ;
+    StarDate &      Subtract     (int64_t seconds) ;
 
-    int64_t         toNow       (void) const ;
+    int64_t         toNow        (void) const ;
 
-    int64_t         secondsTo   (const StarDate & sd) const ;
-    int64_t         secondsTo   (int64_t sd) const ;
+    int64_t         secondsTo    (const StarDate & sd) const ;
+    int64_t         secondsTo    (int64_t sd) const ;
 
-    int64_t         daysTo      (const StarDate & sd) const ;
-    int64_t         daysTo      (int64_t sd) const ;
+    int64_t         daysTo       (const StarDate & sd) const ;
+    int64_t         daysTo       (int64_t sd) const ;
 
-    static void     sleep       (int64_t seconds) ;
-    static void     msleep      (int64_t mseconds) ;
-    static void     usleep      (int64_t useconds) ;
+    // Estimate Complete StarDate Timestamp
+    StarDate        ETA          (int64_t index,int64_t total) ;
+    StarDate        ETA          (int64_t index,int64_t minv,int64_t maxv) ;
 
-    static int64_t  current     (void) ;
-    static int64_t  useconds    (void) ;
-    static int64_t  ustamp      (void) ;
-    static int64_t  tzOffset    (void) ;
+    // Estimate Total Seconds
+    int64_t         Estimate     (int64_t index,int64_t total) ;
+    int64_t         Estimate     (int64_t index,int64_t minv,int64_t maxv) ;
+
+    static void     sleep        (int64_t seconds) ;
+    static void     msleep       (int64_t mseconds) ;
+    static void     usleep       (int64_t useconds) ;
+
+    static int64_t  current      (void) ;
+    static int64_t  useconds     (void) ;
+    static int64_t  ustamp       (void) ;
+    static int64_t  tzOffset     (void) ;
+    static int64_t  RDTSC        (void) ;
+    static int64_t  Clock        (void) ;
+    static int64_t  Frequency    (void) ;
 
   protected:
 

@@ -16,6 +16,7 @@ HEADERS     += $$SRCROOT/include/stardate.hpp
 
 SOURCES     += $$SRCPATH/stardate.cpp
 SOURCES     += $$SRCPATH/usleep.cpp
+SOURCES     += $$SRCPATH/hardware.cpp
 
 OTHER_FILES += $$SRCROOT/CMakeLists.txt
 OTHER_FILES += $$SRCROOT/CiosTime.bat
