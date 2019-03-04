@@ -53,6 +53,7 @@ set(HEADERS include/stardate.hpp)
 # Source codes
 set(CORES
   src/stardate.cpp
+  src/startime.cpp
   src/usleep.cpp
   src/hardware.cpp)
 

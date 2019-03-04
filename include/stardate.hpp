@@ -39,11 +39,14 @@
 namespace STARDATE_NAMESPACE {
 #endif
 
+class LIBSTARDATE_EXPORT StarDate ;
+class LIBSTARDATE_EXPORT StarTime ;
+
 class LIBSTARDATE_EXPORT StarDate
 {
   public:
 
-    int64_t stardate ;
+    int64_t stardate ; // this records only seconds
 
     explicit        StarDate     (void) ;
                     StarDate     (const StarDate & sd) ;
@@ -141,6 +144,22 @@ class LIBSTARDATE_EXPORT StarDate
     static int64_t  RDTSC        (void) ;
     static int64_t  Clock        (void) ;
     static int64_t  Frequency    (void) ;
+
+  protected:
+
+  private:
+
+} ;
+
+class LIBSTARDATE_EXPORT StarTime : public StarDate
+{
+  public:
+
+    int64_t startime ; // this records only nano-seconds
+
+    explicit        StarTime     (void) ;
+                    StarTime     (const StarTime & st) ;
+    virtual        ~StarTime     (void) ;
 
   protected:
 
