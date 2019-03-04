@@ -54,6 +54,7 @@ set(HEADERS include/stardate.hpp)
 set(CORES
   src/stardate.cpp
   src/startime.cpp
+  src/frequency.cpp
   src/usleep.cpp
   src/hardware.cpp)
 

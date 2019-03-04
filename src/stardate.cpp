@@ -3,6 +3,8 @@
 #include <Windows.h>
 
 #define EPOCHFILETIME ( 116444736000000000LL                     )
+#define NANOBASE      ( 1000000000LL                             )
+#define UBASE         ( 1000000LL                                )
 #define SECSADAY      ( 86400LL                                  )
 #define HALFDAY       ( 43200LL                                  )
 #define GMT_HOLO      ( 16436250000000LL - 1                     )
@@ -79,13 +81,13 @@ int StarDate::type(void) const
   return 0 ;
 }
 
-void StarDate::adjustments(void)
-{
-}
-
 bool StarDate::isValid(void) const
 {
   return ( this -> stardate > 0 ) ;
+}
+
+void StarDate::adjustments(void)
+{
 }
 
 int64_t StarDate::Standard(void) const
@@ -100,16 +102,12 @@ int64_t StarDate::TimeShift(void) const
 
 StarDate & StarDate::operator = (const StarDate & sd)
 {
-  this -> stardate = sd . stardate ;
-  adjustments ( )                  ;
-  return (*this)                   ;
+  return this -> assign( sd ) ;
 }
 
 StarDate & StarDate::operator = (int64_t sd)
 {
-  this -> stardate = sd ;
-  adjustments ( )       ;
-  return (*this)        ;
+  return this -> assign( sd ) ;
 }
 
 StarDate & StarDate::operator += (int64_t seconds)
@@ -217,6 +215,13 @@ StarDate & StarDate::assign(const StarDate & sd)
   return (*this)                   ;
 }
 
+StarDate & StarDate::assign(int64_t sd)
+{
+  this -> stardate = sd ;
+  adjustments ( )       ;
+  return (*this)        ;
+}
+
 StarDate & StarDate::setTime(time_t now)
 {
   this -> stardate  = now   ;
@@ -227,7 +232,7 @@ StarDate & StarDate::setTime(time_t now)
 
 StarDate & StarDate::fromUStamp(int64_t uts)
 {
-  return this -> setTime ( uts / 1000000LL ) ;
+  return this -> setTime ( uts / UBASE ) ;
 }
 
 time_t StarDate::toTimestamp(void) const
@@ -429,7 +434,7 @@ int64_t StarDate::useconds(void)
   int64_t        tt              ;
   gettimeofday ( &tv , nullptr ) ;
   tt = int64_t (  tv . tv_usec ) ;
-  tt = tt % 1000000LL            ;
+  tt = tt % UBASE                ;
   return tt                      ;
 }
 
@@ -441,8 +446,8 @@ int64_t StarDate::ustamp(void)
   tt = time     ( nullptr       ) ;
   gettimeofday  ( &tv , nullptr ) ;
   ts  = int64_t (  tv . tv_usec ) ;
-  ts  = ts % 1000000LL            ;
-  tt  = tt * 1000000LL            ;
+  ts  = ts % UBASE                ;
+  tt  = tt * UBASE                ;
   tt += ts                        ;
   return tt                       ;
 }

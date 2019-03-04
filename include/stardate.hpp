@@ -39,8 +39,9 @@
 namespace STARDATE_NAMESPACE {
 #endif
 
-class LIBSTARDATE_EXPORT StarDate ;
-class LIBSTARDATE_EXPORT StarTime ;
+class LIBSTARDATE_EXPORT StarDate  ;
+class LIBSTARDATE_EXPORT StarTime  ;
+class LIBSTARDATE_EXPORT Frequency ;
 
 class LIBSTARDATE_EXPORT StarDate
 {
@@ -54,7 +55,7 @@ class LIBSTARDATE_EXPORT StarDate
     virtual        ~StarDate     (void) ;
 
     operator        int64_t      ( ) const { return stardate ; }
-    virtual int     type         (void) const ;
+    virtual int     type         (void) const ; // return 0 ;
 
     bool            isValid      (void) const ;
 
@@ -83,6 +84,7 @@ class LIBSTARDATE_EXPORT StarDate
 
     bool            operator   > (const StarDate & sd) const ;
     bool            operator   > (int64_t sd) const ;
+
     bool            operator   < (const StarDate & sd) const ;
     bool            operator   < (int64_t sd) const ;
 
@@ -91,6 +93,7 @@ class LIBSTARDATE_EXPORT StarDate
 
     StarDate &      Now          (void) ;
     StarDate &      assign       (const StarDate & sd) ;
+    StarDate &      assign       (int64_t sd) ;
     StarDate &      setTime      (time_t current) ;
     StarDate &      fromUStamp   (int64_t uts) ;
     time_t          toTimestamp  (void) const ;
@@ -155,11 +158,81 @@ class LIBSTARDATE_EXPORT StarTime : public StarDate
 {
   public:
 
-    int64_t startime ; // this records only nano-seconds
+    int64_t startime ; // this records only nano-seconds, 10^9
 
-    explicit        StarTime     (void) ;
-                    StarTime     (const StarTime & st) ;
-    virtual        ~StarTime     (void) ;
+    explicit        StarTime      (void) ;
+                    StarTime      (const StarTime & st) ;
+    virtual        ~StarTime      (void) ;
+
+    virtual int     type          (void) const ; // return 1 ;
+
+    bool            isValid       (void) const ;
+
+    StarTime &      operator    = (const StarTime & st) ;
+
+    bool            operator   == (const StarTime & sd) const ;
+    bool            operator    > (const StarTime & sd) const ;
+    bool            operator    < (const StarTime & sd) const ;
+
+    int64_t         operator    - (const StarTime & st) const ;
+
+    bool            isEqual       (const StarTime & st) const ;
+    bool            isGreater     (const StarTime & st) const ;
+    bool            isLess        (const StarTime & st) const ;
+
+    StarTime &      Now           (void) ;
+    StarTime &      assign        (const StarTime & st) ;
+
+    int64_t         nanosecondsTo (const StarTime & st) const ;
+    int64_t         Leaps         (void) const ;
+
+    StarTime &      AddNano       (int64_t nanoseconds) ;
+    StarTime &      SubtractNano  (int64_t nanoseconds) ;
+
+  protected:
+
+  private:
+
+} ;
+
+class LIBSTARDATE_EXPORT Frequency
+{
+  public:
+
+    long double factor    ;
+    long double frequency ;
+    int64_t     events    ;
+    int64_t     duration  ;
+
+    operator long double        (    ) const ; // frequency * factor
+    // Before you do this, remember to call evaluate() first.
+    // For some reasons, the author refuse to add
+    // an automatical call to evaluate()
+
+    explicit            Frequency   (void) ;
+                        Frequency   (const Frequency & freq) ;
+    virtual            ~Frequency   (void) ;
+
+    Frequency &         operator  = (const Frequency & freq) ;
+    Frequency &         operator ++ (void) ; // events++
+    Frequency &         operator += (int64_t count) ; // events += count
+
+    Frequency &         assign      (const Frequency & freq) ;
+
+    virtual long double evaluate    (void) ; // frequency = events    / duration
+    virtual long double velocity    (void) ; // events    = frequency * duration  (double)
+    virtual long double length      (void) ; // duration  = events    / frequency (double)
+    virtual int64_t     total       (void) ; // events    = frequency * duration
+    virtual int64_t     lambda      (void) ; // duration  = events    / frequency
+
+    // If you do this, remember to set the factor to 1000000000.0 manually
+    // In this function, it force to use 1000000000.0 as factor
+    // If you want these values maintain meaningful, you will have to
+    // set the factor to 1000000000.0
+    // this function uses duration =  T.Leaps()
+    // return value is ( frequency * 1000000000.0 )
+    // if T.Leaps() < 0 , duration =  - T.usecondsToNow() will be used
+    virtual long double operator  = (const StarTime & T) ;
 
   protected:
 
