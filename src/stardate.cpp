@@ -1,8 +1,6 @@
 #include "stardate.hpp"
 
-#include <stdlib.h>
-#include <string.h>
-#include <ctype.h>
+#include <Windows.h>
 
 #define EPOCHFILETIME ( 116444736000000000LL                     )
 #define SECSADAY      ( 86400LL                                  )
@@ -22,12 +20,22 @@
 
 #pragma pack(push,1)
 
+struct timezone       {
+  long tz_minuteswest ; /* minutes W of Greenwich */
+  int  tz_dsttime     ; /* type of dst correction */
+}                     ;
 
 #pragma pack(pop)
 
 #ifndef DONT_USE_NAMESPACE
 namespace STARDATE_NAMESPACE {
 #endif
+
+extern void uSleep           (int64_t usec) ;
+extern int  gettimeofday     (struct timeval * tv, struct timezone * tz) ;
+extern int  strcasecmp_local (const char *s1,const char *s2) ;
+
+#define strcasecmp strcasecmp_local
 
 StarDate:: StarDate (void)
          : stardate (0   )
@@ -121,6 +129,38 @@ int64_t StarDate::secondsTo(const StarDate & sd) const
 int64_t StarDate::secondsTo(int64_t sd) const
 {
   return int64_t ( sd - this -> stardate ) ;
+}
+
+void StarDate::sleep(int64_t seconds)
+{
+  ::Sleep( DWORD ( seconds * 1000 ) ) ;
+}
+
+void StarDate::msleep(int64_t ms)
+{
+  ::Sleep( DWORD ( ms ) ) ;
+}
+
+void StarDate::usleep(int64_t us)
+{
+  if ( us < 0 ) return                    ;
+  /////////////////////////////////////////
+  int64_t ms = us / 1000                  ;
+  int64_t rs = us % 1000                  ;
+  /////////////////////////////////////////
+  if ( ms > 0 ) ::Sleep  ( DWORD ( ms ) ) ;
+  if ( rs > 0 )   uSleep (         us   ) ;
+  /////////////////////////////////////////
+}
+
+int64_t StarDate::useconds(void)
+{
+  struct timeval tv              ;
+  int64_t        tt              ;
+  gettimeofday ( &tv , nullptr ) ;
+  tt = int64_t (  tv . tv_usec ) ;
+  tt = tt % 1000000LL            ;
+  return tt                      ;
 }
 
 #ifndef DONT_USE_NAMESPACE

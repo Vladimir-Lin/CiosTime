@@ -49,7 +49,9 @@ include_directories(include)
 set(HEADERS include/stardate.hpp)
 
 # Source codes
-set(CORES src/stardate.cpp)
+set(CORES
+  src/stardate.cpp
+  src/usleep.cpp)
 
 # Handling pkg-config file
 configure_file(libstardate.pc.in libstardate.pc @ONLY)

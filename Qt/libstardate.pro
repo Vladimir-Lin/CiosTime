@@ -15,6 +15,7 @@ INCLUDEPATH  = $$SRCROOT/include
 HEADERS     += $$SRCROOT/include/stardate.hpp
 
 SOURCES     += $$SRCPATH/stardate.cpp
+SOURCES     += $$SRCPATH/usleep.cpp
 
 OTHER_FILES += $$SRCROOT/CMakeLists.txt
 OTHER_FILES += $$SRCROOT/CiosTime.bat

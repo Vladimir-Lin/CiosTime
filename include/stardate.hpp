@@ -49,30 +49,36 @@ class LIBSTARDATE_EXPORT StarDate
 
     int64_t stardate ;
 
-    explicit   StarDate    (void) ;
-               StarDate    (const StarDate & sd) ;
-               StarDate    (int64_t sd) ;
-    virtual   ~StarDate    (void) ;
+    explicit       StarDate    (void) ;
+                   StarDate    (const StarDate & sd) ;
+                   StarDate    (int64_t sd) ;
+    virtual       ~StarDate    (void) ;
 
-    operator   int64_t     ( ) const { return stardate ; }
-    bool       isValid     (void) const ;
+    operator       int64_t     ( ) const { return stardate ; }
+    bool           isValid     (void) const ;
 
-    StarDate & operator  = (const StarDate & sd) ;
-    StarDate & operator  = (int64_t sd) ;
+    StarDate &     operator  = (const StarDate & sd) ;
+    StarDate &     operator  = (int64_t sd) ;
 
-    StarDate & operator += (int64_t seconds) ;
-    StarDate & operator -= (int64_t seconds) ;
+    StarDate &     operator += (int64_t seconds) ;
+    StarDate &     operator -= (int64_t seconds) ;
 
-    StarDate & Now         (void) ;
-    StarDate & assign      (const StarDate & sd) ;
-    StarDate & setTime     (time_t current) ;
-    time_t     toTimestamp (void) const ;
+    StarDate &     Now         (void) ;
+    StarDate &     assign      (const StarDate & sd) ;
+    StarDate &     setTime     (time_t current) ;
+    time_t         toTimestamp (void) const ;
 
-    StarDate & Add         (int64_t seconds) ;
-    StarDate & Subtract    (int64_t seconds) ;
+    StarDate &     Add         (int64_t seconds) ;
+    StarDate &     Subtract    (int64_t seconds) ;
 
-    int64_t    secondsTo   (const StarDate & sd) const ;
-    int64_t    secondsTo   (int64_t sd) const ;
+    int64_t        secondsTo   (const StarDate & sd) const ;
+    int64_t        secondsTo   (int64_t sd) const ;
+
+    static void    sleep       (int64_t seconds) ;
+    static void    msleep      (int64_t mseconds) ;
+    static void    usleep      (int64_t useconds) ;
+
+    static int64_t useconds    (void) ;
 
   protected:
 
