@@ -267,7 +267,7 @@ long double StarDate::toMya(void) const
 {
   int64_t     ds                                ;
   long double ma                                ;
-  ds  = Stellar::current ( ) - this -> stardate ;
+  ds  = StarDate::current ( ) - this -> stardate ;
   ma  = (long double) ds                        ;
   ma /= SECSADAY                                ;
   ma /= 1461                                    ;
@@ -279,7 +279,7 @@ long double StarDate::toMya(void) const
 long double StarDate::setMya(long double mya)
 {
   /////////////////////////////////////////////
-  int64_t     sd  = Stellar::current ( )      ;
+  int64_t     sd  = StarDate::current ( )      ;
   int64_t     nt  = int64_t ( sd % SECSADAY ) ;
   int64_t     day = int64_t ( sd / SECSADAY ) ;
   long double ma = mya                        ;
@@ -401,17 +401,17 @@ int64_t StarDate::Estimate(int64_t index,int64_t minv,int64_t maxv)
   return this -> Estimate ( index - minv , maxv - minv + 1 ) ;
 }
 
-void Stellar::sleep(int64_t seconds)
+void StarDate::sleep(int64_t seconds)
 {
   ::Sleep( DWORD ( seconds * 1000 ) ) ;
 }
 
-void Stellar::msleep(int64_t ms)
+void StarDate::msleep(int64_t ms)
 {
   ::Sleep( DWORD ( ms ) ) ;
 }
 
-void Stellar::usleep(int64_t us)
+void StarDate::usleep(int64_t us)
 {
   if ( us < 0 ) return                    ;
   /////////////////////////////////////////
@@ -423,12 +423,12 @@ void Stellar::usleep(int64_t us)
   /////////////////////////////////////////
 }
 
-int64_t Stellar::current(void)
+int64_t StarDate::current(void)
 {
   return int64_t ( int64_t ( time ( nullptr ) ) + TBASE ) ;
 }
 
-int64_t Stellar::useconds(void)
+int64_t StarDate::useconds(void)
 {
   struct timeval tv              ;
   int64_t        tt              ;
@@ -438,7 +438,7 @@ int64_t Stellar::useconds(void)
   return tt                      ;
 }
 
-int64_t Stellar::ustamp(void)
+int64_t StarDate::ustamp(void)
 {
   struct timeval tv               ;
   int64_t        tt               ;
@@ -452,7 +452,7 @@ int64_t Stellar::ustamp(void)
   return tt                       ;
 }
 
-int64_t Stellar::tzOffset(void)
+int64_t StarDate::tzOffset(void)
 {
   struct timeval  tv                    ;
   struct timezone tz                    ;
@@ -463,17 +463,17 @@ int64_t Stellar::tzOffset(void)
   return tt                             ;
 }
 
-int64_t Stellar::RDTSC(void)
+int64_t StarDate::RDTSC(void)
 {
   return getRDTSC ( ) ;
 }
 
-int64_t Stellar::Clock(void)
+int64_t StarDate::Clock(void)
 {
   return HardwareClock ( ) ;
 }
 
-int64_t Stellar::Frequency(void)
+int64_t StarDate::Frequency(void)
 {
   return HardwareFrequency ( ) ;
 }
