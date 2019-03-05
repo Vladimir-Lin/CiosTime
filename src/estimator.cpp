@@ -89,13 +89,13 @@ std::pair<int64_t,int64_t> Estimator::add(int64_t size)
   }                                                    ;
   this -> Counter += size                              ;
   ++ ( this -> Update )                                ;
-  this -> update ( Now )                               ;
+  update ( Now )                                       ;
   return Z                                             ;
 }
 
 void Estimator::operator += (int64_t size)
 {
-  this -> append ( size ) ;
+  append ( size ) ;
 }
 
 void Estimator::start (void)
@@ -112,7 +112,7 @@ void Estimator::start (void)
 
 void Estimator::update (void)
 {
-  this -> update ( Tick . Leaps ( ) ) ;
+  update ( Tick . Leaps ( ) ) ;
 }
 
 void Estimator::update(int64_t T)

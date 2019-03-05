@@ -158,7 +158,7 @@ long double Frequency::operator = (const StarTime & T)
 {
   int64_t d = T . Leaps ( )                                         ;
   this -> duration = ( d >= 0 ) ? d : -d                            ;
-  this -> evaluate ( )                                              ;
+  evaluate ( )                                                      ;
   return this -> frequency * static_cast<long double>(1000000000.0) ;
 }
 
