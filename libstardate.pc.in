@@ -5,7 +5,7 @@ lib=${name}.lib
 file=${libdir}/${lib}
 
 Name: libstardate
-Version: 0.0.1
+Version: @VERSION@
 Description: Stellar Time Supports for CIOS
 URL: https://github.com/Vladimir-Lin/CiosTime
 Libs: -L${libdir} -l${name}

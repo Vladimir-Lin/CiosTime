@@ -1,9 +1,9 @@
 cmake_minimum_required(VERSION 3.0)
 project(libstardate)
 include(CheckIncludeFile)
+file(READ "VERSION.txt" VERSION)
 
 option(NONAMESPACE "Don't use namespace in the header" off)
-
 string(TIMESTAMP COMPILE_DATETIME "%Y/%m/%d %H:%M:%S")
 
 if(NONAMESPACE)
