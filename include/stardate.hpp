@@ -141,17 +141,17 @@ class LIBSTARDATE_EXPORT StarDate
     int64_t         Estimate     (int64_t index,int64_t total) ;
     int64_t         Estimate     (int64_t index,int64_t minv,int64_t maxv) ;
 
-    static void     sleep        (int64_t seconds) ;
-    static void     msleep       (int64_t mseconds) ;
-    static void     usleep       (int64_t useconds) ;
+    static LIBSTARDATE_EXPORT void     sleep     (int64_t seconds) ;
+    static LIBSTARDATE_EXPORT void     msleep    (int64_t mseconds) ;
+    static LIBSTARDATE_EXPORT void     usleep    (int64_t useconds) ;
 
-    static int64_t  current      (void) ;
-    static int64_t  useconds     (void) ;
-    static int64_t  ustamp       (void) ;
-    static int64_t  tzOffset     (void) ;
-    static int64_t  RDTSC        (void) ;
-    static int64_t  Clock        (void) ;
-    static int64_t  Frequency    (void) ;
+    static LIBSTARDATE_EXPORT int64_t  current   (void) ;
+    static LIBSTARDATE_EXPORT int64_t  useconds  (void) ;
+    static LIBSTARDATE_EXPORT int64_t  ustamp    (void) ;
+    static LIBSTARDATE_EXPORT int64_t  tzOffset  (void) ;
+    static LIBSTARDATE_EXPORT int64_t  RDTSC     (void) ;
+    static LIBSTARDATE_EXPORT int64_t  Clock     (void) ;
+    static LIBSTARDATE_EXPORT int64_t  Frequency (void) ;
 
   protected:
 
@@ -290,6 +290,10 @@ class LIBSTARDATE_EXPORT Estimator
     virtual void                       start       (void) ;
     virtual void                       update      (void) ;
     virtual void                       update      (int64_t T) ;
+
+  protected:
+
+  private:
 
 } ;
 
