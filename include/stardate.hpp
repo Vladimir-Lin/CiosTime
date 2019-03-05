@@ -141,23 +141,28 @@ class LIBSTARDATE_EXPORT StarDate
     int64_t         Estimate     (int64_t index,int64_t total) ;
     int64_t         Estimate     (int64_t index,int64_t minv,int64_t maxv) ;
 
-    static LIBSTARDATE_EXPORT void     sleep     (int64_t seconds) ;
-    static LIBSTARDATE_EXPORT void     msleep    (int64_t mseconds) ;
-    static LIBSTARDATE_EXPORT void     usleep    (int64_t useconds) ;
-
-    static LIBSTARDATE_EXPORT int64_t  current   (void) ;
-    static LIBSTARDATE_EXPORT int64_t  useconds  (void) ;
-    static LIBSTARDATE_EXPORT int64_t  ustamp    (void) ;
-    static LIBSTARDATE_EXPORT int64_t  tzOffset  (void) ;
-    static LIBSTARDATE_EXPORT int64_t  RDTSC     (void) ;
-    static LIBSTARDATE_EXPORT int64_t  Clock     (void) ;
-    static LIBSTARDATE_EXPORT int64_t  Frequency (void) ;
-
   protected:
 
   private:
 
 } ;
+
+namespace Stellar
+{
+
+extern LIBSTARDATE_EXPORT void     sleep     (int64_t seconds) ;
+extern LIBSTARDATE_EXPORT void     msleep    (int64_t mseconds) ;
+extern LIBSTARDATE_EXPORT void     usleep    (int64_t useconds) ;
+
+extern LIBSTARDATE_EXPORT int64_t  current   (void) ;
+extern LIBSTARDATE_EXPORT int64_t  useconds  (void) ;
+extern LIBSTARDATE_EXPORT int64_t  ustamp    (void) ;
+extern LIBSTARDATE_EXPORT int64_t  tzOffset  (void) ;
+extern LIBSTARDATE_EXPORT int64_t  RDTSC     (void) ;
+extern LIBSTARDATE_EXPORT int64_t  Clock     (void) ;
+extern LIBSTARDATE_EXPORT int64_t  Frequency (void) ;
+
+}
 
 class LIBSTARDATE_EXPORT StarTime : public StarDate
 {

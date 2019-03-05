@@ -136,18 +136,18 @@ StarTime & StarTime::assign(const StarTime & st)
 
 StarTime & StarTime::Now(void)
 {
-  this -> stardate  = StarDate::current   ( ) ;
-  int64_t clock     = StarDate::Clock     ( ) ;
-  int64_t frequency = StarDate::Frequency ( ) ;
-  this -> startime  = 0                       ;
-  if ( frequency > 0 )                        {
-    clock %= frequency                        ;
-    clock *= NANOBASE                         ;
-    clock /= frequency                        ;
-    this  -> startime = clock                 ;
-  }                                           ;
-  adjustments ( )                             ;
-  return (*this)                              ;
+  this -> stardate  = Stellar::current   ( ) ;
+  int64_t clock     = Stellar::Clock     ( ) ;
+  int64_t frequency = Stellar::Frequency ( ) ;
+  this -> startime  = 0                      ;
+  if ( frequency > 0 )                       {
+    clock %= frequency                       ;
+    clock *= NANOBASE                        ;
+    clock /= frequency                       ;
+    this  -> startime = clock                ;
+  }                                          ;
+  adjustments ( )                            ;
+  return (*this)                             ;
 }
 
 int64_t StarTime::nanosecondsTo(const StarTime & st) const
