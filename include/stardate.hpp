@@ -48,6 +48,8 @@ class LIBSTARDATE_EXPORT StarTime  ;
 class LIBSTARDATE_EXPORT Frequency ;
 class LIBSTARDATE_EXPORT Estimator ;
 
+typedef void (*SkipFunction)(void * data) ;
+
 class LIBSTARDATE_EXPORT StarDate
 {
   public:
@@ -152,6 +154,11 @@ class LIBSTARDATE_EXPORT StarDate
     static int64_t  RDTSC        (void) ;
     static int64_t  Clock        (void) ;
     static int64_t  Frequency    (void) ;
+
+    static void     setSkip      (SkipFunction skip,void * data) ;
+    static void     skip         (int64_t  seconds,int64_t intervalus=10000,bool * dropOut=nullptr) ;
+    static void     mskip        (int64_t mseconds,int64_t intervalus=1000 ,bool * dropOut=nullptr) ;
+    static void     uskip        (int64_t useconds,int64_t intervalus=10   ,bool * dropOut=nullptr) ;
 
   protected:
 

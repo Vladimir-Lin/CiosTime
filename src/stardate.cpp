@@ -57,6 +57,9 @@ extern int64_t HardwareFrequency (void) ;
 
 #define strcasecmp strcasecmp_local
 
+static SkipFunction DefaultSkip = nullptr ;
+static void *       SkipData    = nullptr ;
+
 StarDate:: StarDate (void)
          : stardate (0   )
 {
@@ -476,6 +479,36 @@ int64_t StarDate::Clock(void)
 int64_t StarDate::Frequency(void)
 {
   return HardwareFrequency ( ) ;
+}
+
+void StarDate::setSkip(SkipFunction skip,void * data)
+{
+  DefaultSkip = skip ;
+  SkipData    = data ;
+}
+
+void StarDate::skip(int64_t seconds,int64_t intervalus,bool * dropOut)
+{
+  StarDate::uskip (  seconds * 1000000 , intervalus , dropOut ) ;
+}
+
+void StarDate::mskip(int64_t mseconds,int64_t intervalus,bool * dropOut)
+{
+  StarDate::uskip ( mseconds * 1000    , intervalus , dropOut ) ;
+}
+
+void StarDate::uskip(int64_t usecs,int64_t intervalus,bool * dropOut)
+{
+  int64_t end = StarDate::ustamp() + usecs ;
+  while ( StarDate::ustamp ( ) < end )     {
+    if ( nullptr != dropOut )              {
+      if ( *dropOut ) return               ;
+    }                                      ;
+    if ( nullptr != DefaultSkip )          {
+      DefaultSkip ( SkipData )             ;
+    }                                      ;
+    StarDate::usleep ( intervalus )        ;
+  }                                        ;
 }
 
 #ifndef DONT_USE_NAMESPACE
