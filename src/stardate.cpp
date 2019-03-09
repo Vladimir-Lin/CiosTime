@@ -443,15 +443,14 @@ int64_t StarDate::useconds(void)
 
 int64_t StarDate::ustamp(void)
 {
-  struct timeval tv               ;
-  int64_t        tt               ;
-  int64_t        ts               ;
-  tt = time     ( nullptr       ) ;
-  gettimeofday  ( &tv , nullptr ) ;
-  ts  = int64_t (  tv . tv_usec ) ;
-  ts  = ts % UBASE                ;
-  tt  = tt * UBASE                ;
-  tt += ts                        ;
+  FILETIME ft                     ;
+  int64_t  tt                     ;
+  GetSystemTimeAsFileTime ( &ft ) ;
+  tt   = ft . dwHighDateTime      ;
+  tt <<= 32                       ;
+  tt  |= ft . dwLowDateTime       ;
+  tt  /= 10                       ;
+  tt  -= 11644473600000000LL      ;
   return tt                       ;
 }
 
