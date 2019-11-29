@@ -14,7 +14,3 @@ SOURCES += $${PWD}/*.py
 SOURCES += $${PWD}/*.pl
 SOURCES += $${PWD}/*.rb
 SOURCES += $${PWD}/*.rs
-
-include ($${PWD}/Windows/Windows.pri)
-include ($${PWD}/Mac/Mac.pri)
-include ($${PWD}/Linux/Linux.pri)
