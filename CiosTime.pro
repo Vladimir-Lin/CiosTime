@@ -16,6 +16,7 @@ SOURCES += $${PWD}/*.py
 SOURCES += $${PWD}/*.pl
 SOURCES += $${PWD}/*.rb
 SOURCES += $${PWD}/*.rs
+SOURCES += $${PWD}/*.i
 SOURCES += $${PWD}/*.pc.in
 SOURCES += $${PWD}/*.md
 

@@ -14,6 +14,7 @@ SOURCES += $${PWD}/*.py
 SOURCES += $${PWD}/*.pl
 SOURCES += $${PWD}/*.rb
 SOURCES += $${PWD}/*.rs
+SOURCES += $${PWD}/*.i
 
 include ($${PWD}/css/css.pri)
 

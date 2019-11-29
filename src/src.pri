@@ -14,6 +14,7 @@ SOURCES += $${PWD}/*.py
 SOURCES += $${PWD}/*.pl
 SOURCES += $${PWD}/*.rb
 SOURCES += $${PWD}/*.rs
+SOURCES += $${PWD}/*.i
 
 include ($${PWD}/Windows/Windows.pri)
 include ($${PWD}/Mac/Mac.pri)

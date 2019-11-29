@@ -39,9 +39,25 @@ if(MSVC)
   if("${CMAKE_SIZEOF_VOID_P}" STREQUAL "8")
     set(TARGET_ARCH x64)
     add_definitions("-DCIOS_X64=1")
+    # Source codes
+    set(CORES
+      src/Windows/stardate.cpp
+      src/Windows/startime.cpp
+      src/Windows/frequency.cpp
+      src/Windows/estimator.cpp
+      src/Windows/usleep.cpp
+      src/Windows/hardware.cpp)
   elseif("${CMAKE_SIZEOF_VOID_P}" STREQUAL "4")
     set(TARGET_ARCH x86)
     add_definitions("-DCIOS_X86=1")
+    # Source codes
+    set(CORES
+      src/Windows/stardate.cpp
+      src/Windows/startime.cpp
+      src/Windows/frequency.cpp
+      src/Windows/estimator.cpp
+      src/Windows/usleep.cpp
+      src/Windows/hardware.cpp)
   endif()
 endif(MSVC)
 
@@ -49,15 +65,6 @@ include_directories(include)
 
 # Header
 set(HEADERS include/stardate.hpp)
-
-# Source codes
-set(CORES
-  src/stardate.cpp
-  src/startime.cpp
-  src/frequency.cpp
-  src/estimator.cpp
-  src/usleep.cpp
-  src/hardware.cpp)
 
 # Handling pkg-config file
 configure_file(libstardate.pc.in libstardate.pc @ONLY)
