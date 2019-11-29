@@ -1,338 +1,317 @@
 <?php
 
-//////////////////////////////////////////////////////////////////////////////
-// PHP NationItem Class
+namespace CIOS ;
 
-class NationItem {
-//////////////////////////////////////////////////////////////////////////////
-
-public $Id        ;
-public $Uuid      ;
-public $Locality  ;
-public $Priority  ;
-public $Relevance ;
-public $Flags     ;
-public $Length    ;
-public $Name      ;
-public $Columns   ;
-
-//////////////////////////////////////////////////////////////////////////////
-
-function __construct()
+class StarDate
 {
-  $this -> clear ( )  ;
+
+public $Stardate ;
+
+function __construct( $SDT = 0 )
+{
+  $this -> StarDate ( $SDT ) ;
 }
 
 function __destruct()
 {
-  unset ( $this -> Columns ) ;
 }
 
-public function clear()
+public function StarDate ( $SDT )
 {
-  $this -> Id        = 0         ;
-  $this -> Uuid      = 0         ;
-  $this -> Locality  = 0         ;
-  $this -> Priority  = 0         ;
-  $this -> Relevance = 0         ;
-  $this -> Flags     = 0         ;
-  $this -> Length    = 0         ;
-  $this -> Name      = ""        ;
-  $this -> Columns   = array ( ) ;
+  if ( is_a ( $SDT , "CIOS\StarDate" ) ) {
+    $this -> Stardate = $SDT -> Stardate ;
+  } else                                 {
+    $this -> Stardate = $SDT             ;
+  }                                      ;
 }
 
-public function assign($Item)
+public function setSD($SD)
 {
-  $this -> Id        = $Item -> Id        ;
-  $this -> Uuid      = $Item -> Uuid      ;
-  $this -> Locality  = $Item -> Locality  ;
-  $this -> Priority  = $Item -> Priority  ;
-  $this -> Relevance = $Item -> Relevance ;
-  $this -> Flags     = $Item -> Flags     ;
-  $this -> Length    = $Item -> Length    ;
-  $this -> Name      = $Item -> Name      ;
+  $this -> StarDate ( $SDT ) ;
 }
 
-public function tableItems()
+public function isValid()
 {
-  $S = array (                  ) ;
-  array_push ( $S , "id"        ) ;
-  array_push ( $S , "uuid"      ) ;
-  array_push ( $S , "locality"  ) ;
-  array_push ( $S , "priority"  ) ;
-  array_push ( $S , "relevance" ) ;
-  array_push ( $S , "flags"     ) ;
-  array_push ( $S , "length"    ) ;
-  array_push ( $S , "name"      ) ;
-  return $S                       ;
+  return ( $this -> Stardate > 0 ) ;
 }
 
-public function JoinItems ( $X , $S = "," )
+// unix timestamp to stardate
+public function setTime($T)
 {
-  $U = array ( )               ;
-  foreach ( $X as $V )         {
-    $W = "`" . $V . "`"        ;
-    array_push ( $U , $W )     ;
-  }                            ;
-  $L = implode ( $S , $U )     ;
-  unset ( $U )                 ;
-  return $L                    ;
+  $this -> Stardate = $T + 1420092377704080000 ;
+  return $this -> Stardate                     ;
 }
 
-public function Items( $S = "," )
+public function Seconds($D,$H,$M,$S)
 {
-  $X = $this -> tableItems (         ) ;
-  $L = $this -> JoinItems  ( $X , $S ) ;
-  unset                    ( $X      ) ;
-  return $L                            ;
+  return $this -> Days    ( $D ) +
+         $this -> Hours   ( $H ) +
+         $this -> Minutes ( $M ) +
+         $S                      ;
 }
 
-public function ClearColumns()
+public function Minutes($M)
 {
-  unset ( $this -> Columns )     ;
-  $this -> Columns   = array ( ) ;
+  return ( $M * 60 ) ;
 }
 
-public function AddColumn ( $C )
+public function Hours($H)
 {
-  array_push ( $this -> Columns , $C ) ;
+  return ( $H * 3600 ) ;
 }
 
-public function isFlag($Mask)
+public function Days($D)
 {
-  return ( ( gmp_and ( $Mask , $this -> Flags ) ) == $Mask ) ;
+  return ( $D * 84600 ) ;
 }
 
-public function isUuid($u)
+public function Add($S)
 {
-  return ( 0 == gmp_cmp ( $u , $this -> Uuid ) ) ;
+  $this -> Stardate += $S  ;
+  return $this -> Stardate ;
 }
 
-public function isLocality($L)
+public function AddDuration($S)
 {
-  return ( $L == $this -> Locality ) ;
+  $SS  = explode ( ":" , $S )   ;
+  $TT  = 0                      ;
+  $CNT = count ( $SS )          ;
+  if ( $CNT > 0 )               {
+    $II = 0                     ;
+    while ( $II < $CNT )        {
+      $TT = $TT * 60            ;
+      $XX = $SS [ $II ]         ;
+      $XX = intval ( $XX , 10 ) ;
+      $TT = $TT + $XX           ;
+      $II = $II + 1             ;
+    }                           ;
+    $this -> Add ( $TT )        ;
+  }                             ;
+  return $this -> Stardate      ;
 }
 
-public function isRelevance ($r)
+public function Subtract($S)
 {
-  return ( $r == $this -> Relevance ) ;
+  $this -> Stardate -= $S  ;
+  return $this -> Stardate ;
 }
 
-public function hasName()
+public function Now()
 {
-  return ( strlen ( $this -> Name ) > 0 ) ;
+  return $this -> setTime ( time ( ) ) ;
 }
 
-public function set($item,$V)
+// stardate to unix timestamp
+public function Timestamp()
 {
-  $a = strtolower ( $item )                        ;
-  if ( "id"        == $a ) $this -> Id        = $V ;
-  if ( "uuid"      == $a ) $this -> Uuid      = $V ;
-  if ( "locality"  == $a ) $this -> Locality  = $V ;
-  if ( "priority"  == $a ) $this -> Priority  = $V ;
-  if ( "relevance" == $a ) $this -> Relevance = $V ;
-  if ( "flags"     == $a ) $this -> Flags     = $V ;
-  if ( "length"    == $a ) $this -> Length    = $V ;
-  if ( "name"      == $a ) $this -> Name      = $V ;
+  return intval ( $this -> Stardate - 1420092377704080000 , 10 ) ;
 }
 
-public function setRelevance($N)
+public function secondsTo($SD)
 {
-  global $NameUsages                      ;
-  $this -> Relevance = $NameUsages [ $N ] ;
+  return ( $SD -> Stardate - $this -> Stardate ) ;
 }
 
-public function OptionsTail($Options,$Limits)
+public function fromDateTime($DT)
 {
-  $Q = ""                        ;
-  if ( strlen ( $Options ) > 0 ) {
-    $Q .= " "                    ;
-    $Q .= $Options               ;
-  }                              ;
-  if ( strlen ( $Limits  ) > 0 ) {
-    $Q .= " "                    ;
-    $Q .= $Limits                ;
-  }                              ;
-  return $Q                      ;
+  return $this -> setTime ( $DT -> getTimestamp ( ) ) ;
 }
 
-public function ItemPair($item)
+public function fromFormat($dtString,$TZ="")
 {
-  $a = strtolower ( $item )                                ;
-  if ( "id"        == $a )                                 {
-    return "`" . $a . "` = " . (string) $this -> Id        ;
-  }                                                        ;
-  if ( "uuid"      == $a )                                 {
-    return "`" . $a . "` = " . (string) $this -> Uuid      ;
-  }                                                        ;
-  if ( "locality"  == $a )                                 {
-    return "`" . $a . "` = " . (string) $this -> Locality  ;
-  }                                                        ;
-  if ( "priority"  == $a )                                 {
-    return "`" . $a . "` = " . (string) $this -> Priority  ;
-  }                                                        ;
-  if ( "relevance" == $a )                                 {
-    return "`" . $a . "` = " . (string) $this -> Relevance ;
-  }                                                        ;
-  if ( "flags"     == $a )                                 {
-    return "`" . $a . "` = " . (string) $this -> Flags     ;
-  }                                                        ;
-  if ( "length"    == $a )                                 {
-    return "`" . $a . "` = " . (string) $this -> Length    ;
-  }                                                        ;
-  if ( "name"      == $a )                                 {
-    return "`" . $a . "` = " . (string) $this -> Name      ;
-  }                                                        ;
-  return ""                                                ;
+  if                                  ( strlen ( $TZ ) > 0              ) {
+    $TX = new \DateTimeZone           ( $TZ                             ) ;
+    $DT = \DateTime::createFromFormat ( "Y/m/d H:i:s" , $dtString , $TX ) ;
+  } else                                                                  {
+    $DT = \DateTime::createFromFormat ( "Y/m/d H:i:s" , $dtString       ) ;
+  }                                                                       ;
+  return $this -> fromDateTime        ( $DT                             ) ;
 }
 
-public function ItemPairs($items)
+public function fromInput($inpString,$TZ="")
 {
-  $I = array ( )                                 ;
-  foreach ( $items as $i )                       {
-    array_push ( $I , $this -> ItemPair ( $i ) ) ;
-  }                                              ;
-  $L = implode ( " and " , $I )                  ;
-  unset        (           $I )                  ;
-  return $L                                      ;
+  $dtxString = str_replace   ( "T" , " "  , $inpString ) ;
+  $dtxString = str_replace   ( "-" , "/"  , $dtxString ) ;
+  $cnt       = substr_count  ( $dtxString , ":"        ) ;
+  if ( $cnt == 1 ) $dtxString = $dtxString . ":00"       ;
+  return $this -> fromFormat ( $dtxString , $TZ        ) ;
 }
 
-public function QueryItems($items,$Options = "",$Limits = "")
+public function ShrinkMinute()
 {
-  $Q = " where " . $this -> ItemPairs ( $items )        ;
-  $Q = $Q . $this -> OptionsTail ( $Options , $Limits ) ;
-  return $Q                                             ;
+  $TS = $this -> Timestamp ( ) ;
+  $TS = $TS % 60               ;
+  $this -> Subtract ( $TS )    ;
 }
 
-public function SelectItems($Table,$items,$Options = "",$Limits = "")
+public function ShrinkHour()
 {
-  return "select " . $this -> Items ( ) . " from " . $Table         .
-         $this -> QueryItems ( $items , $Options , $Limits ) . " ;" ;
+  $TS = $this -> Timestamp ( ) ;
+  $TS = $TS % 3600             ;
+  $this -> Subtract ( $TS )    ;
 }
 
-public function SelectColumns($Table,$Options = "order by `priority` asc",$Limits = "")
+public function toDateTime($TZ)
 {
-  return $this -> SelectItems ( $Table           ,
-                                $this -> Columns ,
-                                $Options         ,
-                                $Limits        ) ;
+  $TX  = new \DateTimeZone ( $TZ                    ) ;
+  $DT  = new \DateTime     (                        ) ;
+  $DT -> setTimezone       ( $TX                    ) ;
+  $DT -> setTimestamp      ( $this -> Timestamp ( ) ) ;
+  unset                    ( $TX                    ) ;
+  return $DT                                          ;
 }
 
-public function Select                                 (
-                  $Table                               ,
-                  $Options = "order by `priority` asc" ,
-                  $Limits  = "limit 0,1"               )
+public function Weekday($TZ)
 {
-  $L = array                (                                        ) ;
-  array_push                ( $L , "uuid" , "locality" , "relevance" ) ;
-  $Q = $this -> SelectItems ( $Table , $L , $Options , $Limits       ) ;
-  unset                     ( $L                                     ) ;
-  return $Q                                                            ;
+  $DT = $this -> toDateTime ( $TZ      ) ;
+  $WD = $DT   -> format     ( "N"      ) ;
+  ////////////////////////////////////////
+  unset                     ( $DT      ) ;
+  ////////////////////////////////////////
+  return intval             ( $WD , 10 ) ;
 }
 
-public function SelectPosition($Table)
+public function isPM($TZ)
 {
-  $L = array                (             ) ;
-  array_push                ( $L            ,
-                              "uuid"        ,
-                              "locality"    ,
-                              "priority"    ,
-                              "relevance" ) ;
-  $Q = "select `id` from " . $Table         .
-       $this -> QueryItems  ( $L ) . " ;"   ;
-  unset                     ( $L          ) ;
-  return $Q                                 ;
+  $DT = $this -> toDateTime ( $TZ      ) ;
+  $HD = $DT   -> format     ( "G"      ) ;
+  ////////////////////////////////////////
+  unset                     ( $DT      ) ;
+  ////////////////////////////////////////
+  $HD = intval              ( $HD , 10 ) ;
+  ////////////////////////////////////////
+  return ( $HD < 12 ) ? 0 : 1            ;
 }
 
-public function LastPriority($Table)
+public function toDateString($TZ,$FMT="Y/m/d")
 {
-  $L = array                 (                          ) ;
-  array_push                 ( $L                         ,
-                               "uuid"                     ,
-                               "locality"                 ,
-                               "relevance"              ) ;
-  $QQ = "select `priority` from " . $Table                .
-         $this -> QueryItems ( $L                         ,
-                               "order by `priority` desc" ,
-                               "limit 0,1" ) . " ;"       ;
-  unset                      ( $L                       ) ;
-  return $QQ                                              ;
+  $DT = $this -> toDateTime ( $TZ  ) ;
+  $DS = $DT   -> format     ( $FMT ) ;
+  unset                     ( $DT  ) ;
+  return $DS                         ;
 }
 
-public function Insert($Table)
+public function toTimeString($TZ,$FMT="H:i:s")
 {
-  return "insert into " . $Table              .
-            " (`uuid`,"                       .
-          "`locality`,"                       .
-          "`priority`,"                       .
-         "`relevance`,"                       .
-             "`flags`,"                       .
-              "`name`,"                       .
-            "`length`)"                       .
-            " values ("                       .
-            (string) $this -> Uuid      . "," .
-            (string) $this -> Locality  . "," .
-            (string) $this -> Priority  . "," .
-            (string) $this -> Relevance . "," .
-            (string) $this -> Flags     . "," .
-            "?,length(name)) ;"               ;
+  $DT = $this -> toDateTime ( $TZ  ) ;
+  $DS = $DT   -> format     ( $FMT ) ;
+  unset                     ( $DT  ) ;
+  return $DS                         ;
 }
 
-public function Delete($Table)
+public function toDateTimeString($TZ,$JOIN="T",$DateFormat="Y-m-d",$TimeFormat="H:i:s")
 {
-  $L  = array (                                                     ) ;
-  array_push  ( $L , "uuid" , "locality" , "priority" , "relevance" ) ;
-  $QQ = "delete from " . $Table                                       .
-        $this -> QueryItems ( $L )                             . " ;" ;
-  unset ( $L )                                                        ;
-  return $QQ                                                          ;
+  $DX = $this -> toDateTime ( $TZ         ) ;
+  $DS = $DX   -> format     ( $DateFormat ) ;
+  $DT = $DX   -> format     ( $TimeFormat ) ;
+  unset                     ( $DX         ) ;
+  return $DS . $JOIN . $DT                  ;
 }
 
-public function DeleteId($Table)
+public function toLongString($TZ,$DateFormat="Y-m-d",$TimeFormat="H:i:s")
 {
-  return "delete from {$Table} where `id` = {$this->Id} ;" ;
+  $Correct = true                                                            ;
+  ////////////////////////////////////////////////////////////////////////////
+  if  ( isset ( $GLOBALS [ "WeekDays" ] )                                  ) {
+    $WeekDays = $GLOBALS [ "WeekDays" ]                                      ;
+  } else $Correct = false                                                    ;
+  ////////////////////////////////////////////////////////////////////////////
+  if  ( isset ( $GLOBALS [ "AMPM"     ] )                                  ) {
+    $AMPM     = $GLOBALS [ "AMPM"     ]                                      ;
+  } else $Correct = false                                                    ;
+  ////////////////////////////////////////////////////////////////////////////
+  if ( $Correct                                                            ) {
+    $SW  = $WeekDays [ $this -> Weekday ( $TZ ) ]                            ;
+    $SP  = $AMPM     [ $this -> isPM    ( $TZ ) ]                            ;
+    $SJ  = " {$SW} {$SP} "                                                   ;
+  } else $SJ = " "                                                           ;
+  ////////////////////////////////////////////////////////////////////////////
+  return $this -> toDateTimeString ( $TZ , $SJ , $DateFormat , $TimeFormat ) ;
 }
 
-public function Update($Table)
+// php time format calcuation
+public function Calculate($DTS)
 {
-  $L  = array (                                                     ) ;
-  array_push  ( $L , "uuid" , "locality" , "priority" , "relevance" ) ;
-  $QQ = "update " . $Table                                            .
-        " set `name` = ? ,"                                           .
-        " `flags` = " . $this -> Flags . " ,"                         .
-        " `length` = length(name)"                                    .
-        $this -> QueryItems ( $L )                             . " ;" ;
-  unset ( $L )                                                        ;
-  return $QQ                                                          ;
+  $this -> setTime ( strtotime ( $DTS , $this -> Timestamp ( ) ) ) ;
 }
 
-public function UpdateId($Table)
+public function SecondsOfDay($TZ)
 {
-  return "update " . $Table                           .
-         " set `name` = ? ,"                          .
-             " `uuid` = " . $this -> Uuid . " ,"      .
-         " `locality` = " . $this -> Locality . " ,"  .
-         " `priority` = " . $this -> Priority . " ,"  .
-        " `relevance` = " . $this -> Relevance . " ," .
-            " `flags` = " . $this -> Flags . " ,"     .
-           " `length` = length(`name`)"               .
-         " where `id` = " . $this -> Id . " ;"        ;
+  $DX             = $this -> toDateString ( $TZ , "Y-m-d"     ) ;
+  $DX             = "{$DX}T00:00:00"                            ;
+  $XS             = new StarDate          (                   ) ;
+  $XS -> Stardate = $XS -> fromInput      ( $DX               ) ;
+  $XV             = $XS -> secondsTo      ( $this             ) ;
+  $XV             = intval                ( (string) $XV , 10 ) ;
+  return $XV                                                    ;
 }
 
-public function obtain($R)
+// calcuate a person's age
+public function YearsOld($TZ)
 {
-  $this -> Id        = $R [ "id"        ] ;
-  $this -> Uuid      = $R [ "uuid"      ] ;
-  $this -> Locality  = $R [ "locality"  ] ;
-  $this -> Priority  = $R [ "priority"  ] ;
-  $this -> Relevance = $R [ "relevance" ] ;
-  $this -> Flags     = $R [ "flags"     ] ;
-  $this -> Length    = $R [ "length"    ] ;
-  $this -> Name      = $R [ "name"      ] ;
+  $TDT = $this -> toDateTime ( $TZ  ) ;
+  $NDT = new \DateTime       (      ) ;
+  $DIF = $NDT -> diff        ( $TDT ) ;
+  return $DIF -> y                    ;
 }
 
+public static function StarDateToString($DT,$Tz,$FMT)
+{
+  $SD  = new StarDate      (      ) ;
+  $SD -> Stardate = $DT             ;
+  $DX  = $SD -> toDateTime ( $Tz  ) ;
+  $SS  = $DX -> format     ( $FMT ) ;
+  ///////////////////////////////////
+  unset                    ( $SD  ) ;
+  unset                    ( $DX  ) ;
+  ///////////////////////////////////
+  return $SS                        ;
+}
+
+public static function StarDateString($DT,$FMT)
+{
+  $Tz = TimeZones::GetTZ        (                  ) ;
+  return self::StarDateToString ( $DT , $Tz , $FMT ) ;
+}
+
+public static function UntilToday($DATE,$TZ,$YEARSTR,$MONTHSTR)
+{
+  //////////////////////////////////////////////////////
+  if ( strlen ( $DATE ) <= 0 ) return ""               ;
+  $NOW  = new StarDate ( )                             ;
+  $NOW -> Now          ( )                             ;
+  //////////////////////////////////////////////////////
+  $XXXZ = $NOW -> toDateString ( $TZ , "Y-m-d" )       ;
+  $DATE = str_replace ( "/" , "-" , $DATE  )           ;
+  //////////////////////////////////////////////////////
+  $ZZZ  = explode ( "-" , $DATE )                      ;
+  $WWW  = explode ( "-" , $XXXZ )                      ;
+  //////////////////////////////////////////////////////
+  $YYY  = intval ( $WWW [ 0 ] , 10 )                   ;
+  $YYY -= intval ( $ZZZ [ 0 ] , 10 )                   ;
+  //////////////////////////////////////////////////////
+  $MMM  = intval ( $WWW [ 1 ] , 10 )                   ;
+  $MMM -= intval ( $ZZZ [ 1 ] , 10 )                   ;
+  //////////////////////////////////////////////////////
+  $DDD  = intval ( $WWW [ 2 ] , 10 )                   ;
+  $DDD -= intval ( $ZZZ [ 2 ] , 10 )                   ;
+  //////////////////////////////////////////////////////
+  if ( $DDD < 0 ) $MMM = $MMM - 1                      ;
+  if ( $MMM < 0 )                                      {
+    $MMM = $MMM + 12                                   ;
+    $YYY = $YYY - 1                                    ;
+  }                                                    ;
+  //////////////////////////////////////////////////////
+  $YST = str_replace ( "$(TOTAL)" , $YYY , $YEARSTR  ) ;
+  $MST = str_replace ( "$(TOTAL)" , $MMM , $MONTHSTR ) ;
+  $MSG = ""                                            ;
+  if ( $YYY > 0 ) $MSG = $MSG . $YST                   ;
+  if ( $MMM > 0 ) $MSG = $MSG . $MST                   ;
+  if ( strlen ( $MSG ) <= 0 ) $MSG = "0"               ;
+  //////////////////////////////////////////////////////
+  return $MSG                                          ;
+}
 //////////////////////////////////////////////////////////////////////////////
 }
-
 //////////////////////////////////////////////////////////////////////////////
 ?>

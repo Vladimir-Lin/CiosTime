@@ -1,7 +1,7 @@
 <Project>
  <Name>
-   <Locality Value="1001" Prefer="0">ISO 3166 Supports</Locality>
-   <Locality Value="1002" Prefer="0">國家</Locality>
+   <Locality Value="1001" Prefer="0">CIOS Time Supports</Locality>
+   <Locality Value="1002" Prefer="0">時間</Locality>
  </Name>
  <Schedule>
  </Schedule>

@@ -1,3 +1,5 @@
+# CIOS Time Qt Creator Project File
+
 SOURCES += $${PWD}/*.hpp
 SOURCES += $${PWD}/*.cpp
 SOURCES += $${PWD}/*.h
