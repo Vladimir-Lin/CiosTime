@@ -1,4 +1,4 @@
-CIOS Time 1.0.0
+Precision Time Supports for CIOS 1.0.0
 
 Web site => https://vladimir-lin.github.io/CiosTime
 
