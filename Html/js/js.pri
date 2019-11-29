@@ -14,11 +14,3 @@ SOURCES += $${PWD}/*.py
 SOURCES += $${PWD}/*.pl
 SOURCES += $${PWD}/*.rb
 SOURCES += $${PWD}/*.rs
-SOURCES += $${PWD}/*.i
-
-include ($${PWD}/css/css.pri)
-include ($${PWD}/js/js.pri)
-
-include ($${PWD}/tw/tw.pri)
-include ($${PWD}/cn/cn.pri)
-include ($${PWD}/en/en.pri)
